@@ -1,0 +1,1 @@
+gradle clean build && java -jar build/libs/resource-server-1.0.0.jar

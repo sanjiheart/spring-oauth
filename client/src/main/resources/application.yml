@@ -1,0 +1,25 @@
+server:
+  port: 8080
+  
+spring:
+  security:
+    oauth2:
+      client:
+        registration:
+          gan-oidc:
+            provider: spring
+            client-id: gan
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/login/oauth2/code/{registrationId}"
+            scope: openid
+          gan-authorization-code:
+            provider: spring
+            client-id: gan
+            client-secret: secret
+            authorization-grant-type: authorization_code
+            redirect-uri: "http://127.0.0.1:8080/authorized"
+            scope: gan.read
+        provider:
+          spring:
+            issuer-uri: http://auth-server:9000

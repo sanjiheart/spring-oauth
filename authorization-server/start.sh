@@ -1,0 +1,1 @@
+gradle clean build && java -jar build/libs/authorization-server-1.0.0.jar
