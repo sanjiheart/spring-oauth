@@ -48,7 +48,16 @@ public class SecurityConfig {
   @Bean
   @Order(2)
   public SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
-    http.authorizeHttpRequests().anyRequest().authenticated().and().formLogin();
+    http.authorizeHttpRequests()
+        .anyRequest()
+        .authenticated()
+        .and()
+        .formLogin()
+        .loginPage("/login")
+        .permitAll()
+        .and()
+        .logout()
+        .logoutSuccessUrl("/login");
     return http.build();
   }
 
@@ -77,37 +86,33 @@ public class SecurityConfig {
         .build();
     return new InMemoryRegisteredClientRepository(gan);
   }
-  
+
   // An instance of com.nimbusds.jose.jwk.source.JWKSource for signing access tokens.
-  @Bean 
+  @Bean
   public JWKSource<SecurityContext> jwkSource() {
     KeyPair keyPair = generateRsaKey();
     RSAPublicKey publicKey = (RSAPublicKey) keyPair.getPublic();
     RSAPrivateKey privateKey = (RSAPrivateKey) keyPair.getPrivate();
-    RSAKey rsaKey = new RSAKey.Builder(publicKey)
-        .privateKey(privateKey)
-        .keyID(UUID.randomUUID().toString())
-        .build();
+    RSAKey rsaKey = new RSAKey.Builder(publicKey).privateKey(privateKey).keyID(UUID.randomUUID().toString()).build();
     JWKSet jwkSet = new JWKSet(rsaKey);
     return new ImmutableJWKSet<>(jwkSet);
   }
 
   // An instance of java.security.KeyPair with keys generated on startup used to create the JWKSource above.
-  private static KeyPair generateRsaKey() { 
+  private static KeyPair generateRsaKey() {
     KeyPair keyPair;
     try {
       KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
       keyPairGenerator.initialize(2048);
       keyPair = keyPairGenerator.generateKeyPair();
-    }
-    catch (Exception ex) {
+    } catch (Exception ex) {
       throw new IllegalStateException(ex);
     }
     return keyPair;
   }
 
   // An instance of ProviderSettings to configure Spring Authorization Server.
-  @Bean 
+  @Bean
   public ProviderSettings providerSettings() {
     return ProviderSettings.builder().build();
   }
